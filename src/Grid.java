@@ -7,7 +7,7 @@ import java.awt.Stroke;
 import javax.swing.JPanel;
 /**
  * 
- *@author TaraPrasad, Aneesh, Sourabh
+ *@author TaraPrasad
  *
  */
 
@@ -18,7 +18,8 @@ public class Grid extends JPanel {
 
 	public Grid(boolean[][] cells) {
 		this.cells = cells;
-		setBackground(new Color(0xCC1100));
+//		setBackground(new Color(0xCC1100));
+		setBackground(Color.BLACK);
 	}
 
 	@Override
@@ -29,11 +30,11 @@ public class Grid extends JPanel {
 		drawCells(g2);
 		//Draw the lines
 		Stroke oldStroke = g2.getStroke();
-		g2.setStroke(new BasicStroke(2.0f));
+		g2.setStroke(new BasicStroke(1.0f));
 		drawLines(g2);
 		g2.setStroke(oldStroke);
-		/*Filling – is a process of painting the shape’s interior with solid color or a color gradient, or a texture pattern
-		Stroking – is a process of drawing a shape’s outline applying stroke width, line style, and color attribute
+		/*Filling ï¿½ is a process of painting the shapeï¿½s interior with solid color or a color gradient, or a texture pattern
+		Stroking ï¿½ is a process of drawing a shapeï¿½s outline applying stroke width, line style, and color attribute
 		Stroke oldStroke = g2.getStroke();
 		g2.setStroke(new BasicStroke(2.0f,BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		drawLines(g2);
@@ -43,7 +44,7 @@ public class Grid extends JPanel {
 	private void drawCells(Graphics g) {
 		width = (double) this.getWidth() / cells[0].length;
 		height = (double) this.getHeight() / cells.length;
-		g.setColor(Color.GREEN);
+		g.setColor(Color.WHITE);
 		for (int row = 0; row < cells.length; row++) {
 			for (int column = 0; column < cells[0].length; column++) {
 				if (cells[row][column] == true) {
@@ -64,6 +65,7 @@ public class Grid extends JPanel {
 			g.drawLine(0, (int) Math.round(row * height), this.getWidth(), (int) Math.round(row * height));
 		}
 	}
+	
 	public void updateGrid(boolean[][] cells) {
 		this.cells = cells;//Store new reference
 		repaint();

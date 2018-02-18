@@ -1,5 +1,5 @@
 /**
- * @author TaraPrasad, Aneesh, Sourabh
+ * @author TaraPrasad
  */
 public interface SimulationControlsListener {
 
@@ -9,7 +9,7 @@ public interface SimulationControlsListener {
 
 	void resumeButtonClicked();
 
-	void restartButtonClicked();
+	void openFileButtonClicked();
 
 	void nextGenerationButtonClicked();
 

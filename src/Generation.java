@@ -1,6 +1,6 @@
 /**
  * 
- * @author TaraPrasad, Aneesh, Sourabh
+ * @author TaraPrasad
  *
  */
 public class Generation {
@@ -41,47 +41,41 @@ public class Generation {
 			}
 		}
 	}
+
 	/**
-	 * row-1 column-1	row-1		row-1 column+1
+	 * row-1 column-1 row-1 row-1 column+1
 	 * 
-	 * column-1							  column+1
+	 * column-1 column+1
 	 * 
-	 * row+ column+1	row+1		row+1 column+1
+	 * row+ column+1 row+1 row+1 column+1
 	 */
 	private void calculateNeighbors() {
-		for (int row = 0; row < currentGeneration.length; row++) {
-			for (int column = 0; column < currentGeneration[0].length; column++) {
+		int n = currentGeneration.length;
+		int m = currentGeneration[0].length;
+		for (int row = 0; row < n; row++) {
+			for (int column = 0; column < m; column++) {
 				neighborCount[row][column] = 0;
 				// Row and Column Bounds should be checked first
-				if (row > 0 && column > 0 && currentGeneration[row - 1][column - 1] == true)// up-left
-																							// neighbor
+				if (currentGeneration[(row - 1 + n) % n][(column - 1 + m) % m] == true)// up-left neighbor
 					neighborCount[row][column]++;
-				if (row > 0 && currentGeneration[row - 1][column] == true)// up
-																			// neighbor
+				if (currentGeneration[(row - 1 + n) % n][column] == true)// up neighbor
 					neighborCount[row][column]++;
-				if (column > 0 && currentGeneration[row][column - 1] == true)// left
-																				// neighbor
+				if (currentGeneration[row][(column - 1 + m) % m] == true)// left neighbor
 					neighborCount[row][column]++;
-				if (row < (currentGeneration.length - 1) && column > 0 && currentGeneration[row + 1][column - 1] == true)// left-down
-																												// neighbor
+				if (currentGeneration[(row + 1) % n][(column - 1 + m) % m] == true)// left-down neighbor
 					neighborCount[row][column]++;
-				if (row > 0 && column < (currentGeneration[0].length - 1) && currentGeneration[row - 1][column + 1] == true)// right-up
-																												// neighbor
+				if (currentGeneration[(row - 1 + n) % n][(column + 1) % m] == true)// right-up neighbor
 					neighborCount[row][column]++;
-				if (row < (currentGeneration.length - 1) && currentGeneration[row + 1][column] == true)// down
-																							// neighbor
+				if (currentGeneration[(row + 1) % n][column] == true)// down neighbor
 					neighborCount[row][column]++;
-				if (column < (currentGeneration[0].length - 1) && currentGeneration[row][column + 1] == true)// right
-																									// neighbor
+				if (currentGeneration[row][(column + 1) % m] == true)// right neighbor
 					neighborCount[row][column]++;
-				if (row < (currentGeneration.length - 1) && column < (currentGeneration[0].length - 1)// right-down
-																				// neighbor
-						&& currentGeneration[row + 1][column + 1] == true)
+				if (currentGeneration[(row + 1) % n][(column + 1) % m] == true) // right-down neighbor
 					neighborCount[row][column]++;
 			}
 		}
 	}
-
+	
 	public boolean[][] getCurrentGeneration() {
 		return currentGeneration;
 	}

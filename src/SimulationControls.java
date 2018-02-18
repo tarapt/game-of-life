@@ -1,19 +1,13 @@
 import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
  * 
- * @author TaraPrasad, Aneesh, Saurabh
- *
+ * @author TaraPrasad
  */
 
 public class SimulationControls extends JPanel implements ActionListener {
@@ -25,10 +19,10 @@ public class SimulationControls extends JPanel implements ActionListener {
 	private JGradientButton addCellsButton;
 	private JGradientButton removeCellsButton;
 	private JGradientButton clearButton;
-	private JGradientButton restartButton;
+	private JGradientButton openFileButton;
 	private JGradientButton startButton;
 	private JGradientButton resetButton;
-
+	
 	public SimulationControls() {
 		Color lightYellow = new Color(255, 255, 153);
 		setBackground(lightYellow);
@@ -40,12 +34,12 @@ public class SimulationControls extends JPanel implements ActionListener {
 		addCellsButton = JGradientButton.newInstance("Add Cells Mode");
 		removeCellsButton = JGradientButton.newInstance("Remove Cells Mode");
 		clearButton = JGradientButton.newInstance("Clear Button");
-		restartButton = JGradientButton.newInstance("Restart With Recent Initial Setup");
+		openFileButton = JGradientButton.newInstance("Open File");
 		startButton = JGradientButton.newInstance("Start");
 		resetButton = JGradientButton.newInstance("Reset");
 		// Adding the control buttons to the panel
 		add(startButton);
-		add(restartButton);
+		add(openFileButton);
 		add(nextGenerationButton);
 		add(pauseButton);
 		add(resumeButton);
@@ -61,7 +55,7 @@ public class SimulationControls extends JPanel implements ActionListener {
 		addCellsButton.addActionListener(this);
 		removeCellsButton.addActionListener(this);
 		clearButton.addActionListener(this);
-		restartButton.addActionListener(this);
+		openFileButton.addActionListener(this);
 		startButton.addActionListener(this);
 		resetButton.addActionListener(this);
 	}
@@ -77,9 +71,21 @@ public class SimulationControls extends JPanel implements ActionListener {
 		nextGenerationButton.setEnabled(false);
 		pauseButton.setEnabled(false);
 		resumeButton.setEnabled(false);
-		restartButton.setEnabled(false);
+		openFileButton.setEnabled(true);
 		startButton.setEnabled(false);
 		resetButton.setEnabled(false);
+	}
+	
+	public void setLoadFileConfiguration() {
+		addCellsButton.setEnabled(true);
+		removeCellsButton.setEnabled(true);
+		clearButton.setEnabled(true);
+		nextGenerationButton.setEnabled(true);
+		pauseButton.setEnabled(true);
+		resumeButton.setEnabled(false);
+		openFileButton.setEnabled(true);
+		startButton.setEnabled(true);
+		resetButton.setEnabled(true);
 	}
 	
 	public void setStartableConfiguration() {
@@ -89,14 +95,14 @@ public class SimulationControls extends JPanel implements ActionListener {
 	
 	public void setRunningConfiguration() {
 		pauseButton.setEnabled(true);
-		restartButton.setEnabled(true);
+		openFileButton.setEnabled(true);
 		resetButton.setEnabled(true);
 		startButton.setEnabled(false);
 		nextGenerationButton.setEnabled(false);
 	}
 	
 	public void setSingleStepConfiguration() {
-		restartButton.setEnabled(true);
+		openFileButton.setEnabled(true);
 		resetButton.setEnabled(true);
 	}
 	
@@ -126,8 +132,8 @@ public class SimulationControls extends JPanel implements ActionListener {
 			fireRemoveCellsButtonClicked();
 		else if (e.getSource().equals(clearButton))
 			fireClearButtonClicked();
-		else if (e.getSource().equals(restartButton))
-			fireRestartButtonClicked();
+		else if (e.getSource().equals(openFileButton))
+			fireOpenFileButtonClicked();
 		else if (e.getSource().equals(startButton))
 			fireStartButtonClicked();
 		else if (e.getSource().equals(resetButton))
@@ -174,8 +180,8 @@ public class SimulationControls extends JPanel implements ActionListener {
 			simulationControlsListener.pauseButtonClicked();
 	}
 
-	private void fireRestartButtonClicked() {
+	private void fireOpenFileButtonClicked() {
 		if (simulationControlsListener != null)
-			simulationControlsListener.restartButtonClicked();
+			simulationControlsListener.openFileButtonClicked();
 	}
 }

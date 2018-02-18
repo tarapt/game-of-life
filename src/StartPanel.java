@@ -14,7 +14,7 @@ import java.awt.Insets;
 /**
  * Describes the rules of Game of Life
  * 
- * @author TaraPrasad, Aneesh, Sourabh
+ * @author TaraPrasad
  */
 public class StartPanel extends JPanel {
 	private JGradientButton rulesButton;
@@ -141,7 +141,7 @@ public class StartPanel extends JPanel {
 		gbc_groupInfo.insets = new Insets(0, 0, 5, 0);
 		gbc_groupInfo.gridx = 0;
 		gbc_groupInfo.gridy = 7;
-		add(groupInfo, gbc_groupInfo);
+//		add(groupInfo, gbc_groupInfo);
 
 		exitButton = JGradientButton.newInstance("Exit");
 		exitButton.setFont(new Font("", 15, 20));

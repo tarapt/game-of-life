@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -9,11 +8,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
@@ -23,7 +27,7 @@ import javax.swing.border.BevelBorder;
  * Simulation is a JComponent consisting of two JPanel objects - 1) grid : Grid
  * 2) SimulationControls : SimulationControls
  * 
- * @author TaraPrasad, Aneesh, Saurabh
+ * @author TaraPrasad
  */
 public class Simulation extends JComponent implements ActionListener {
 	private Game game;
@@ -38,18 +42,23 @@ public class Simulation extends JComponent implements ActionListener {
 	private Timer timer;// Swing Timer - Uses a separate timer thread for
 						// execution
 	private boolean[][] cells;
-	private boolean[][] firstGeneration; // Automatically set the first time.
+//	private boolean[][] firstGeneration; // Automatically set the first time.
 	private int waitTime;// time to wait in milliseconds
 	private boolean addingCells;// Make sure that removingCells is not true at
 	private boolean removingCells;// the same time as addingCells and
 									// vice-versa.
 	private int generationNumber;
 
-	public static final int ROWS = 20;
-	public static final int COLUMNS = 40;
+	// maintain ratio 1:3
+	public static final int ROWS = 60;
+	public static final int COLUMNS = 180;
+	public static final int ORIGIN_ROW = 20;
+	public static final int ORIGIN_COLUMN = 40;
+	
+	final JFileChooser fileDialog = new JFileChooser();
 
 	private enum SimulationState {
-		INITIAL, STARTABLE, RUNNING, PAUSED,RESUMED,SINGLESTEP
+		INITIAL, STARTABLE, RUNNING, PAUSED, RESUMED, SINGLESTEP
 	}
 
 	public Simulation(Game game) {
@@ -66,7 +75,7 @@ public class Simulation extends JComponent implements ActionListener {
 		grid = new Grid(cells);
 		generation = new Generation(cells);
 		timer = new Timer(waitTime, this);// this refers to the listener (here its the Simulation class
-														// implementing a Listener)
+											// implementing a Listener)
 		simulationControls = new SimulationControls();
 		setSimulationState(SimulationState.INITIAL);
 
@@ -113,13 +122,39 @@ public class Simulation extends JComponent implements ActionListener {
 			}
 
 			@Override
-			public void restartButtonClicked() {
-				if (generationNumber > 1) {
-					cells = firstGeneration.clone();
+			public void openFileButtonClicked() {
+				resetButtonClicked();
+				int returnVal = fileDialog.showOpenDialog(Simulation.this);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fileDialog.getSelectedFile();
+					loadConfigFromFile(file);
 					generationNumber = 1;
 					generation = new Generation(cells);
 					grid.updateGrid(cells);
 					updateStatusLabel();
+					simulationControls.setLoadFileConfiguration();
+				}
+			}
+
+			private void loadConfigFromFile(File file) {
+				try {
+					Scanner sc = new Scanner(file);
+					sc.nextLine();
+					int row = ORIGIN_ROW;
+					while (sc.hasNextLine()) {
+			            String line = sc.nextLine();
+			            for (int i = 0; i < line.length(); i++) {
+			            	if(line.charAt(i) == '*' || line.charAt(i) == 'O') 
+			            		cells[row][(ORIGIN_COLUMN + i) % COLUMNS] = true;
+			            	else
+			            		cells[row][(ORIGIN_COLUMN + i) % COLUMNS] = false;
+						}
+			            row = (row + 1) % ROWS;
+			        }
+			        sc.close();
+				} catch (FileNotFoundException e) {
+					JOptionPane.showMessageDialog(new JFrame(), "Couldn't read the file.", "Dialog",
+					        JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
@@ -176,7 +211,7 @@ public class Simulation extends JComponent implements ActionListener {
 						cells[row][column] = true;
 				}
 				grid.repaint();
-				if(simulationState == SimulationState.INITIAL){
+				if (simulationState == SimulationState.INITIAL) {
 					setSimulationState(SimulationState.STARTABLE);
 				}
 			}
@@ -187,8 +222,8 @@ public class Simulation extends JComponent implements ActionListener {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				/*
-				 * Takes decision based on the boolean variables addingCells or
-				 * removingCells values
+				 * Takes decision based on the boolean variables addingCells or removingCells
+				 * values
 				 */
 				double width = (double) grid.getWidth() / cells[0].length;
 				double height = (double) grid.getHeight() / cells.length;
@@ -205,7 +240,7 @@ public class Simulation extends JComponent implements ActionListener {
 					}
 				}
 				grid.repaint();
-				if(simulationState == SimulationState.INITIAL){
+				if (simulationState == SimulationState.INITIAL) {
 					setSimulationState(SimulationState.STARTABLE);
 				}
 			}
@@ -220,7 +255,7 @@ public class Simulation extends JComponent implements ActionListener {
 
 	private void setSimulationState(SimulationState simulationState) {
 		this.simulationState = simulationState;
-		switch(simulationState){
+		switch (simulationState) {
 		case INITIAL:
 			simulationControls.setInitialConfiguration();
 			break;
@@ -241,10 +276,10 @@ public class Simulation extends JComponent implements ActionListener {
 			break;
 		}
 	}
-	
+
 	private void displayNextGeneration() {
-		if (generationNumber == 1)
-			firstGeneration = cells.clone();
+//		if (generationNumber == 1)
+//			firstGeneration = cells.clone();
 		generation = new Generation(cells.clone());
 		cells = generation.getNextGeneration().clone();
 		grid.updateGrid(cells);
@@ -281,13 +316,13 @@ public class Simulation extends JComponent implements ActionListener {
 		gc.weighty = 0.2;
 		gc.anchor = GridBagConstraints.LINE_START;
 		add(backButton, gc);
-		
+
 		gc.fill = GridBagConstraints.RELATIVE;
 		gc.gridy = 2;
 		gc.gridx = 0;
 		gc.weighty = 0.2;
 		statusPanel.setPreferredSize(new Dimension((int) (getWidth() * 0.2), (int) (getHeight() * 0.04)));
-		gc.insets = new Insets(0, 100 ,0 ,0 );
+		gc.insets = new Insets(0, 100, 0, 0);
 		gc.anchor = GridBagConstraints.WEST;
 		add(statusPanel, gc);
 
@@ -296,7 +331,7 @@ public class Simulation extends JComponent implements ActionListener {
 		speedPanel.setPreferredSize(new Dimension((int) (getWidth() * 0.8), (int) (getHeight() * 0.04)));
 		gc.anchor = GridBagConstraints.EAST;
 		add(speedPanel, gc);
-		
+
 	}
 
 	private void updateStatusLabel() {
